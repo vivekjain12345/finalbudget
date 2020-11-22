@@ -8,7 +8,7 @@ import { ContactComponent } from './contact/contact.component';
 import { P404Component } from './p404/p404.component';
 
 import { BreadcrumsComponent } from './breadcrums/breadcrums.component';
-
+import { DashboardComponent } from './dashboard/dashboard.component';
 const routes: Routes = [
   {
     path: '',
@@ -29,11 +29,9 @@ const routes: Routes = [
     component: ContactComponent,
 
   },
-
-
   {
-    path: '**',
-    component: P404Component
+    path: 'dashboard',
+    component: DashboardComponent
   },
   {
     path: 'hero',
@@ -43,6 +41,10 @@ const routes: Routes = [
   {
     path: 'bread',
     component: BreadcrumsComponent
+  },
+  {
+    path: '**',
+    component: P404Component
   }
 
 

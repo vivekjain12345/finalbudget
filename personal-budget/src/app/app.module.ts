@@ -1,5 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -14,11 +17,18 @@ import { LoginComponent } from './login/login.component';
 import { P404Component } from './p404/p404.component';
 import { BreadcrumsComponent } from './breadcrums/breadcrums.component';
 import { ContactComponent } from './contact/contact.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
 
+
+
+
+
+
 @NgModule({
   declarations: [
+
     AppComponent,
     MenuComponent,
     HeroComponent,
@@ -29,14 +39,19 @@ import {HashLocationStrategy, LocationStrategy} from '@angular/common';
     LoginComponent,
     P404Component,
     BreadcrumsComponent,
-    ContactComponent
+    ContactComponent,
+    DashboardComponent
+
+
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
+    FormsModule,
     AppRoutingModule
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule { }

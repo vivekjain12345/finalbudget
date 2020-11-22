@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient  } from '@angular/common/http';
 import { Chart } from 'Chart.js';
 import * as d3 from 'd3';
@@ -10,12 +10,11 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 @Component({
-  selector: 'pb-homepage',
-  templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.scss']
+  selector: 'pb-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
 })
-export class HomepageComponent implements AfterViewInit {
-
+export class DashboardComponent implements OnInit {
 
   private componentBudget: any;
   private svg;
@@ -41,16 +40,15 @@ export class HomepageComponent implements AfterViewInit {
 labels: []
 };
 
+  constructor(private http: HttpClient, private dataService: DataService) { }
 
-  constructor(private http: HttpClient, private dataService: DataService) {  }
+  ngOnInit(): void {
 
-  ngAfterViewInit(): void {
-
-if (this.dataService.BudgetData !== null && this.dataService.BudgetData !== undefined  )
+    if (this.dataService.BudgetData !== null && this.dataService.BudgetData !== undefined  )
 {
   this.componentBudget = this.dataService.BudgetData;
 }
-
+//call from http
 this.http.get('http://localhost:3000/budget')
     .subscribe((res: any) => {
         for (var i = 0; i < res.length; i++) {
@@ -62,10 +60,7 @@ this.http.get('http://localhost:3000/budget')
 
   });
 
-
-
-
-this.createSvg();
+  this.createSvg();
 if (this.componentBudget === undefined || this.componentBudget === null)
   {
 this.dataService.getData().subscribe(
@@ -81,18 +76,14 @@ this.dataService.getData().subscribe(
   }
 }
 
-
-
-
-  private createSvg(): void {
-    this.svg = d3.select('figure#bar')
-    .append('svg')
-    .attr('width', this.width + (this.margin * 2))
-    .attr('height', this.height + (this.margin * 2))
-    .append('g')
-    .attr('transform', 'translate(' + this.margin + ',' + this.margin + ')');
+private createSvg(): void {
+  this.svg = d3.select('figure#bar')
+  .append('svg')
+  .attr('width', this.width + (this.margin * 2))
+  .attr('height', this.height + (this.margin * 2))
+  .append('g')
+  .attr('transform', 'translate(' + this.margin + ',' + this.margin + ')');
 }
-
 
 private drawBars(data: any[]): void {
   // Create the X-axis band scale
@@ -132,7 +123,10 @@ private drawBars(data: any[]): void {
 }
 
 
-  // tslint:disable-next-line: typedef
+
+
+
+//pie chart code
   createChart() {
     // var ctx = document.getElementById('myChart').getContext('2d');
     var ctx = document.getElementById('myChart');
@@ -143,3 +137,9 @@ private drawBars(data: any[]): void {
     }
 
 }
+
+
+
+
+
+

@@ -1,1 +1,55 @@
-<p>login works!</p>
+<main id="main">
+
+<body>
+
+  <div class ="Login Form">
+    <h2>Login Form</h2>
+  <form >
+ <div class="container">
+      <label for="uname"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required >
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required >
+
+      <button type="submit" onclick="login()">Login</button>
+      <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label>
+    </div>
+</form>
+  </div>
+
+  <div class ="SignUp Form">
+    <h2>SignUp Form</h2>
+  <form (ngSubmit)='onSubmit()'>
+    <div class="imgcontainer">
+  </div>
+
+    <div class="container">
+      <label for="email"><b>Name</b></label>
+      <input type="text" placeholder="Enter Email" name="email" required>
+
+      <label for="name"><b>Email</b></label>
+      <input type="text" placeholder="Enter Name" name="name" required>
+
+      <br>
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+
+
+      <label for="confirm psw"><b>Confirm Password</b></label>
+      <input type="password" placeholder="Confirm Password" name="psw" required>
+
+      <button type="submit">SignUp</button>
+
+    </div>
+</form>
+  </div>
+
+
+
+  </body>
+
+  </main>
