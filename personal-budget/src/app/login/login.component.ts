@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm, Validators } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { LoginService } from './login.service';
 import { first } from 'rxjs/operators';
+import { NotificationService } from '../shared/notification.service';
 
 
 
@@ -14,19 +15,19 @@ import { first } from 'rxjs/operators';
 })
 export class LoginComponent implements OnInit {
 
-
-  token = this.authService.checkToken() === null ? false : true;
-  firsttime = this.authService.getLogin() === null ? 'first time ' : '';
+  loginForm: FormGroup;
+  sigunUpForm: FormGroup;
   submitted = false;
-  sigunUpForm;
-  alertMsg = '';
-  showErrorAlert = false;
-  showSuccessAlert = false;
+  loginSubmitted = false;
+  loading = false;
+  loginLoading = false;
 
   constructor(
     private authService: AuthService,
     private formBuilder: FormBuilder,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private router: Router,
+    private notificationService: NotificationService
     // private idTouchService: IdtouchService
   ) {
     this.sigunUpForm = this.formBuilder.group({
@@ -34,64 +35,82 @@ export class LoginComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       pwd: ['', Validators.required]
     });
-    console.log(`Check token ${this.token}`);
-    if (this.token) {
-      //  this.idTouchService.verifyTouchId().subscribe(this.touchIdObserver);
-    }
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+    });
   }
 
   get f() { return this.sigunUpForm.controls; }
-
-  login() {
-    // this.authService.authenticateUser();
-  }
-
-  ionViewWillEnter() {
-    this.token = this.authService.checkToken() === null ? false : true;
-    this.firsttime = this.authService.getLogin() === null ? 'first time ' : '';
-  }
-
+  get fl() {return this.loginForm.controls; }
 
   ngOnInit(): void {
+    console.log('init');
+  }
+
+  login() {
+    this.loginSubmitted = true;
+    if (this.loginForm.invalid) {
+      return;
+    }
+    this.loginLoading = true;
+    this.authService.login(this.fl.email.value, this.fl.password.value)
+    .pipe(first())
+    .subscribe(
+        data => {
+          if (data && data['success']) {
+            this.showAlertMessage(false, 'Login Successfull! You will be redirected in next few seconds.');
+            setTimeout(_ =>{
+              this.router.navigate(['/']);
+              this.loginLoading = false;
+            },3500)
+          } else {
+            this.showAlertMessage(true, 'Combination of username and password do not match');
+            this.loginLoading = false;
+          }
+        },
+        error => {
+            this.showAlertMessage(true, 'Some Error Occured! Please try again later.');
+            this.loginSubmitted = false;
+            this.loginLoading = false;
+        });
+    // this.authService.authenticateUser();
   }
 
   addUser() {
     this.submitted = true;
-    
     if (this.sigunUpForm.invalid) {
       return;
     }
+    this.loading = true;
+    
     this.loginService.register(this.sigunUpForm.value)
-    .pipe(first())
-    .subscribe(
-      data => {
-        console.log(data);
-        if(data && data['success']) {
-          this.showAlertMessage(false, 'User Created Successfully');
-          this.sigunUpForm.reset();
+      .pipe(first())
+      .subscribe(
+        data => {
+          console.log(data);
+          if (data && data['success']) {
+            this.showAlertMessage(false, 'User Created Successfully');
+            this.sigunUpForm.reset();
+          } else {
+            this.showAlertMessage(true, 'Email Id Already Exists! Please try a new one.')
+          }
           this.submitted = false;
-        } else {
-          this.showAlertMessage(true, 'Email Id Already Exists! Please try a new one.')
+          this.loading = false;
+        },
+        error => {
+          this.showAlertMessage(true, 'Some Error Occured! Please try again later.');
+          this.submitted = false;
+          this.loading = false;
         }
-      },
-      error => {
-        this.showAlertMessage(true, 'Some Error Occured! Please try again later.')
-      }
-    )
+      )
   }
 
   showAlertMessage(isError: boolean, msg: string) {
-    this.alertMsg = msg;
     if(isError) {
-      this.showErrorAlert = true;
+      this.notificationService.showErrorMessage(msg);
     } else {
-      this.showSuccessAlert = true;
+      this.notificationService.showSuccessMessage(msg);
     }
-    setTimeout(_ => {
-      this.showErrorAlert = false;
-      this.showSuccessAlert = false;
-    }, 5000);
   }
-
-
 }

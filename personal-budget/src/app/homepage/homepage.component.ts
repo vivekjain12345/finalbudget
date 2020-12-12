@@ -4,7 +4,7 @@ import { Chart } from 'Chart.js';
 import * as d3 from 'd3';
 import { DataService } from '../data.service';
 import { map } from 'rxjs/operators';
-import { Mybudget } from '../Models/budget';
+import { Mybudget } from '../shared/models/budget';
 import { from } from 'rxjs';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 

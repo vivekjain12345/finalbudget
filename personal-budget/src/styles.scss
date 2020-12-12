@@ -9,6 +9,8 @@
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
 
+ @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
  html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
@@ -406,10 +408,7 @@ article {
 }
 
 .page-area {
-  max-width: 1100px;
   display: inline-block;
-  margin-top: 25% ;
-
 }
 
 /*.bottom {
@@ -520,3 +519,13 @@ polyline{
   border-radius: 25px;
   background-color: #f1f1f1;
 }*/
+
+.mat-snack-bar-container.success {
+  background-color:green;
+  color: white;
+}
+
+.mat-snack-bar-container.error {
+  background-color:red;
+  color: white;
+}

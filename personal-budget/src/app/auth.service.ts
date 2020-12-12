@@ -2,90 +2,46 @@ import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { switchMap, tap, map, retryWhen, delay, catchError } from 'rxjs/operators';
 //import { HttpService } from '../../../services/http.service';
-import { HttpClient  } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { User } from './shared/models/user';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private currentUserSubject: BehaviorSubject<User>;
+  public currentUser: Observable<User>;
 
-  // private requestJWTToken(authCode: string): Observable<any> {
-  //   console.log(`requestJWTToken running...`);
-  //   console.log(`AuthCode: `, authCode);
-  //   const url = 'http://localthost:3000';
-  //   const body = {
-  //     code: authCode,
-  //     grant_type: 'authorization_code',
-  //    // client_id: environment.clientId,
-  //     //redirect_uri: environment.redirectUri
-  //   };
-  //   const headers = {
-  //       'Content-Type': 'application/x-www-form-urlencoded',
-  //       Accept: 'application/x-www-form-urlencoded',
-  //   };
-  //   console.log(`URL: `, url, `Body: `, body, `Headers: `, headers);
-  //  // return this.httpService.httpPost(url, body, headers);
-  // }
+  serverURL = 'http://localhost:3000/';
 
-  /**
-   *
-   * @param backendIdToken
-   */
-  // private requestNewIdToken(backendIdToken: string): Observable<any> {
-  //   //const url = environment.idTokenEndpoint;
-  //   const body = {
-  //     abbvieIdToken: backendIdToken
-  //   };
-  //  // return this.httpService.httpGet(url, body);
-  //   }
-
-  /**
-   * Retrieve the saved ID Token that must be passed as a bearer token when making API calls
-   */
-  //  getToken(): Observable<string> {
-  //    console.log('getToken');
-  //    // localStorage.setItem("token", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIxNTA0NzYwNCIsInN1YiI6IjE1MDQ3NjA0IiwibmJmIjoxNTg4NjAzNjM3LCJleHAiOjE2MjAxMzk2MzcsImlhdCI6MTU4ODYwMzYzN30.bgOkSfAW5k4kOZ9BLm3_JmhokvHHeZ2CTJfIMRXebec');
-  //    return of(localStorage.getItem('token'));
-  //  }
-
-  /**
-   * Save the ID Token
-   * @param token
-   */
-  saveToken(token: string) {
-    return localStorage.setItem('token', token);
+  constructor(private http: HttpClient) {
+    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+    this.currentUser = this.currentUserSubject.asObservable();
   }
 
-  deleteToken() {
-    return localStorage.removeItem('token');
+  login(username: string, password: string) {
+    return this.http.post<any>(`${this.serverURL}login`, { username, password })
+      .pipe(map(res => {
+        // login successful if there's a jwt token in the response
+        console.log(res.response);
+        if (res.response && res.response.token) {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(res.response));
+          this.currentUserSubject.next(res.response);
+        }
+
+        return res;
+      }));
   }
 
-  /**
-   * TODO - Check token to see if true
-   * @param token
-   */
-  checkToken() {
-    return localStorage.getItem('token');
-  }
-
-  authenticateIfToken() {
-    if (localStorage.getItem('token')) {
-      //return this.authenticatedState.next(true);
-    }
+  public get currentUserValue(): User {
+    return this.currentUserSubject.value;
   }
 
   logout() {
-   this.deleteToken();
-  // this.callbackState.next(false);
-   //this.authenticatedState.next(false);
- }
-
- saveLogin() {
-    return localStorage.setItem('firsttime', 'true');
-  }
-
-  getLogin() {
-    return localStorage.getItem('firsttime');
+    // remove user from local storage to log user out
+    localStorage.removeItem('currentUser');
+    this.currentUserSubject.next(null);
   }
 }

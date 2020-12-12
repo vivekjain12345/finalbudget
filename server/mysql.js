@@ -44,6 +44,13 @@ function checkUserExists(emailId) {
   return handlingQueries(query);
 }
 
+function checkLoginCredentials(email, password) {
+  console.log(email);
+  console.log(password);
+  let query = `SELECT * FROM users where email = '${email}' and password = '${password}'`
+  return handlingQueries(query);
+}
+
 function addUserInfo(email,userName,password) {
   let query = `INSERT INTO users (email, username, password) VALUES ('${email}', '${userName}', '${password}')`;
   return handlingQueries(query);
@@ -52,3 +59,4 @@ function addUserInfo(email,userName,password) {
 module.exports.fetchUserInfo = fetchUserInfo;
 module.exports.checkUserExists = checkUserExists;
 module.exports.addUserInfo = addUserInfo;
+module.exports.checkLoginCredentials = checkLoginCredentials;

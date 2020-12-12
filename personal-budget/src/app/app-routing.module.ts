@@ -9,6 +9,8 @@ import { P404Component } from './p404/p404.component';
 
 import { BreadcrumsComponent } from './breadcrums/breadcrums.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthGuard } from './shared/Interceptors/auth.guard';
+
 const routes: Routes = [
   {
     path: '',
@@ -31,7 +33,8 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardComponent
+    component: DashboardComponent,
+    canActivate: [AuthGuard] 
   },
   {
     path: 'hero',

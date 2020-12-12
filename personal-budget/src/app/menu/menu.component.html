@@ -2,9 +2,13 @@
         <ul>
             <li><a [routerLink]=" ['/']">Home</a></li>
             <li><a [routerLink]=" ['/about']">About</a></li>
-            <li><a [routerLink]=" ['/login']">Login</a></li>
             <li><a [routerLink]=" ['/contact']">Contact</a></li>
             <li><a [routerLink]=" ['/dashboard']">Dashboard</a></li>
+        </ul>
 
+        <ul class="ml-auto">
+            <li *ngIf="!currentUser"><a [routerLink]="['/login']">Login</a></li>
+            <li  *ngIf="currentUser" ><span>Welcome, {{currentUser.username}}</span></li>
+            <li  *ngIf="currentUser" ><a class="nav-item nav-link" (click)="logout()">Logout</a></li>
         </ul>
     </nav>
