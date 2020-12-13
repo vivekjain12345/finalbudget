@@ -1,15 +1,14 @@
 //Budget API
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 const router = express.Router();
-var budget = require('./Kritika.json');
-const db = require('./mysql.js');
-const jwtHelper = require('./jwt/jwt.js');
-const errorHandler = require('./jwt/error-handling.js');
-
+var budget = require("./Kritika.json");
+const db = require("./mysql.js");
+const jwtHelper = require("./jwt/jwt.js");
+const errorHandler = require("./jwt/error-handling.js");
 
 app.use(cors());
 //Here we are configuring express to use body-parser as middle-ware.
@@ -18,63 +17,75 @@ app.use(bodyParser.json());
 
 app.use(jwtHelper.jwt());
 
-router.get('/budget',cors(), (req, res) => {
-    console.log("budget");
-res.json(budget);
+router.get("/budget", cors(), (req, res) => {
+  console.log("budget");
+  res.json(budget);
 });
 
-router.get('/fetchUserInfo',cors(), (req, res) => {
-    db.fetchUserInfo().then(x =>{
-        res.json(x);
+router.get("/chartBudget", cors(), (req, res) => {
+  db.fetchChartData().then((x) => {
+    res.json(x);
+  });
+});
+
+router.get("/fetchUserInfo", cors(), (req, res) => {
+  db.fetchUserInfo().then((x) => {
+    res.json(x);
+  });
+});
+
+router.post("/login", cors(), (req, res) => {
+  const body = req.body;
+  const email = body.username;
+  const pwd = body.password;
+  jwtHelper
+    .authenticate(email, pwd)
+    .then((x) => {
+      res.json({
+        success: true,
+        response: x,
+      });
+    })
+    .catch((x) => {
+      res.json({
+        success: false,
+        response: x,
+      });
     });
 });
 
-router.post('/login' , cors(), (req, res) => {
-    const body = req.body;
-    const email = body.username;
-    const pwd = body.password;
-    jwtHelper.authenticate(email, pwd).then(x => {
-        res.json({
-            success: true,
-            response: x
-        });
-    }).catch(x => {
-        res.json({
-            success: false,
-            response: x
-        });
+router.post("/register", cors(), (req, res) => {
+  const body = req.body;
+  const email = body.email;
+  const userName = body.userName;
+  const pwd = body.pwd;
+  db.checkUserExists(email)
+    .then((x) => {
+      if (x.length === 0) {
+        return db.addUserInfo(email, userName, pwd);
+      }
+      return Promise.reject("Duplicate Users");
     })
-});
-
-router.post('/register',cors(), (req, res) => {
-	const body = req.body;
-	const email = body.email;
-	const userName = body.userName;
-	const pwd = body.pwd;
-    db.checkUserExists(email).then(x => {
-        if(x.length === 0) {
-            return db.addUserInfo(email,userName,pwd);
-        }
-        return Promise.reject('Duplicate Users');
-    }).then(x => {
-        res.json({
-            success: true,
-            response: x
-        });
-    }).catch(x => {
-        res.json({
-            success: false,
-            response: x
-        });
+    .then((x) => {
+      res.json({
+        success: true,
+        response: x,
+      });
+    })
+    .catch((x) => {
+      res.json({
+        success: false,
+        response: x,
+      });
     });
 });
 
 app.listen(port, () => {
-    console.log(`API served at http://localhost:${port}`);
-}); 
+  console.log(`API served at http://localhost:${port}`);
+});
 app.use(errorHandler);
 app.use("/", router);
 
-db.fetchUserInfo().then(x =>{
-    console.log(x);
+db.fetchUserInfo().then((x) => {
+  console.log(x);
 });

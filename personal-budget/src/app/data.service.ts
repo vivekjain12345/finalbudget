@@ -25,6 +25,10 @@ public getData(): Observable<any> {
   return this.http.get<any>('http://localhost:3000/budget')  ;
 }
 
+public getChartData(): Observable<any> {
+  return this.http.get<any>('http://localhost:3000/chartBudget')  ;
+}
+
 
 
 

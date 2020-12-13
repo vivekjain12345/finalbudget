@@ -42,10 +42,14 @@ export class LoginComponent implements OnInit {
   }
 
   get f() { return this.sigunUpForm.controls; }
-  get fl() {return this.loginForm.controls; }
+  get fl() { return this.loginForm.controls; }
 
   ngOnInit(): void {
-    console.log('init');
+    const currentUser = this.authService.currentUserValue;
+    if (currentUser) {
+      this.notificationService.showMessage("Logged In Already! Redirected to dashboard page.");
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   login() {
@@ -55,24 +59,22 @@ export class LoginComponent implements OnInit {
     }
     this.loginLoading = true;
     this.authService.login(this.fl.email.value, this.fl.password.value)
-    .pipe(first())
-    .subscribe(
+      .pipe(first())
+      .subscribe(
         data => {
           if (data && data['success']) {
-            this.showAlertMessage(false, 'Login Successfull! You will be redirected in next few seconds.');
-            setTimeout(_ =>{
-              this.router.navigate(['/']);
-              this.loginLoading = false;
-            },3500)
+            this.showAlertMessage(false, 'Login Successfull! Redirected to dashboard');
+            this.router.navigate(['/dashboard']);
+            this.loginLoading = false;
           } else {
             this.showAlertMessage(true, 'Combination of username and password do not match');
             this.loginLoading = false;
           }
         },
         error => {
-            this.showAlertMessage(true, 'Some Error Occured! Please try again later.');
-            this.loginSubmitted = false;
-            this.loginLoading = false;
+          this.showAlertMessage(true, 'Some Error Occured! Please try again later.');
+          this.loginSubmitted = false;
+          this.loginLoading = false;
         });
     // this.authService.authenticateUser();
   }
@@ -83,7 +85,7 @@ export class LoginComponent implements OnInit {
       return;
     }
     this.loading = true;
-    
+
     this.loginService.register(this.sigunUpForm.value)
       .pipe(first())
       .subscribe(
@@ -107,7 +109,7 @@ export class LoginComponent implements OnInit {
   }
 
   showAlertMessage(isError: boolean, msg: string) {
-    if(isError) {
+    if (isError) {
       this.notificationService.showErrorMessage(msg);
     } else {
       this.notificationService.showSuccessMessage(msg);

@@ -45,8 +45,6 @@ function checkUserExists(emailId) {
 }
 
 function checkLoginCredentials(email, password) {
-  console.log(email);
-  console.log(password);
   let query = `SELECT * FROM users where email = '${email}' and password = '${password}'`
   return handlingQueries(query);
 }
@@ -56,7 +54,13 @@ function addUserInfo(email,userName,password) {
   return handlingQueries(query);
 }
 
+function fetchChartData() {
+  let query = `SELECT * FROM budgetData`;
+  return handlingQueries(query);
+}
+
 module.exports.fetchUserInfo = fetchUserInfo;
 module.exports.checkUserExists = checkUserExists;
 module.exports.addUserInfo = addUserInfo;
 module.exports.checkLoginCredentials = checkLoginCredentials;
+module.exports.fetchChartData = fetchChartData;
