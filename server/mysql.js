@@ -35,22 +35,42 @@ function handlingQueries(query) {
 }
 
 function fetchUserInfo() {
-  let query  = "SELECT * FROM users";
+  let query  = "SELECT * FROM tblUsers";
   return handlingQueries(query);
 }
 
 function checkUserExists(emailId) {
-  let query = `SELECT * FROM users where email = '${emailId}'`
+  let query = `SELECT * FROM tblUsers where EmailId = '${emailId}'`
   return handlingQueries(query);
 }
 
 function checkLoginCredentials(email, password) {
-  let query = `SELECT * FROM users where email = '${email}' and password = '${password}'`
+  let query = `SELECT * FROM tblUsers where EmailId = '${email}' and Password = '${password}'`
   return handlingQueries(query);
 }
 
 function addUserInfo(email,userName,password) {
-  let query = `INSERT INTO users (email, username, password) VALUES ('${email}', '${userName}', '${password}')`;
+  let query = `INSERT INTO tblUsers (EmailId, UserName, Password) VALUES ('${email}', '${userName}', '${password}')`;
+  return handlingQueries(query);
+}
+
+function addCategory(category, userId) {
+  let query = `INSERT INTO tblCategories (Category, UserId) VALUES ('${category}', '${userId}')`;
+  return handlingQueries(query);
+}
+
+function fetchCategories (userId) {
+  let query = `SELECT * FROM tblCategories where UserId = '${userId}'`
+  return handlingQueries(query);
+}
+
+function fetchBudget (userId) {
+  let query = `SELECT * FROM tblBudget where UserId = '${userId}'`
+  return handlingQueries(query);
+}
+
+function fetchExpense (userId) {
+  let query = `SELECT * FROM tblExpense where UserId = '${userId}'`
   return handlingQueries(query);
 }
 
@@ -64,3 +84,7 @@ module.exports.checkUserExists = checkUserExists;
 module.exports.addUserInfo = addUserInfo;
 module.exports.checkLoginCredentials = checkLoginCredentials;
 module.exports.fetchChartData = fetchChartData;
+module.exports.addCategory = addCategory;
+module.exports.fetchCategories = fetchCategories;
+module.exports.fetchBudget = fetchBudget;
+module.exports.fetchExpense = fetchExpense;

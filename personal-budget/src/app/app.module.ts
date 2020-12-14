@@ -3,7 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MaterialModule } from './shared/material.module';
 
 import { HttpClientModule , HTTP_INTERCEPTORS} from '@angular/common/http';
 
@@ -54,7 +54,7 @@ import {HashLocationStrategy, LocationStrategy} from '@angular/common';
     FormsModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    MatSnackBarModule,
+    MaterialModule,
     BrowserAnimationsModule
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy},

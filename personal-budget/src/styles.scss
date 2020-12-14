@@ -9,7 +9,7 @@
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
 
- @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+ @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
  html {
   line-height: 1.15; /* 1 */
@@ -408,7 +408,7 @@ article {
 }
 
 .page-area {
-  display: inline-block;
+  display: block;
 }
 
 /*.bottom {

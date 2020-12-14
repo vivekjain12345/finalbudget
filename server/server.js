@@ -34,6 +34,37 @@ router.get("/fetchUserInfo", cors(), (req, res) => {
   });
 });
 
+router.get("/fetchCategories", cors(), (req, res) => {
+  const userId = req.query.userId;
+  console.log(userId);
+  db.fetchCategories(userId).then((x) => {
+    res.json(x);
+  });
+});
+
+router.post("/addCategory", cors(), (req, res) => {
+  const body = req.body;
+  const userId = body.userId;
+  const category = body.category;
+  db.addCategory(category, userId).then((x) => {
+    res.json(x);
+  });
+});
+
+router.get("/fetchBudget", cors(), (req, res) => {
+  const userId = req.query.userId;
+  db.fetchBudget(userId).then((x) => {
+    res.json(x);
+  });
+});
+
+router.get("/fetchExpense", cors(), (req, res) => {
+  const userId = req.query.userId;
+  db.fetchExpense(userId).then((x) => {
+    res.json(x);
+  });
+});
+
 router.post("/login", cors(), (req, res) => {
   const body = req.body;
   const email = body.username;

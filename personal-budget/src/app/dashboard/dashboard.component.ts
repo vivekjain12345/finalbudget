@@ -3,10 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Chart } from 'Chart.js';
 import * as d3 from 'd3';
 import { DataService } from '../data.service';
-import { map } from 'rxjs/operators';
-import { Mybudget } from '../shared/models/budget';
-import { from } from 'rxjs';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import {BudgetService } from '../shared/budget.service';
+import { NotificationService } from '../shared/notification.service';
 
 
 @Component({
@@ -21,6 +19,17 @@ export class DashboardComponent implements OnInit {
   private margin = 50;
   private width = 750 - (this.margin * 2);
   private height = 400 - (this.margin * 2);
+  newCategory = '';
+  selectedBudgetCategory = '';
+  selectedExpenseCategory = '';
+  selectedBudgetValue = '';
+  selectedExpenseValue = '';
+  selectedBudgetMonth = '';
+  selectedExpenseMonth = '';
+  loading = false;
+
+  categories = [];
+  months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
   public dataSource = {
     datasets: [
@@ -40,10 +49,11 @@ export class DashboardComponent implements OnInit {
     labels: []
   };
 
-  constructor(private http: HttpClient, private dataService: DataService) { }
+  constructor(private http: HttpClient, private dataService: DataService, private budgetService: BudgetService, private notiService: NotificationService) { }
 
   ngOnInit(): void {
 
+    this.fetchCategories();
     if (this.dataService.BudgetData !== null && this.dataService.BudgetData !== undefined) {
       this.componentBudget = this.dataService.BudgetData;
     }
@@ -67,6 +77,44 @@ export class DashboardComponent implements OnInit {
     else {
       this.drawBars(this.componentBudget);
     }
+  }
+
+  fetchCategories() {
+    this.loading = true;
+    this.budgetService.getCategories().subscribe(x => {
+      this.categories = x;
+      console.log(this.categories)
+      this.loading = false;
+    });
+  }
+
+  insertCategories() {
+    this.loading = true;
+    this.newCategory = this.newCategory.trim();
+    if(this.newCategory == '') {
+      this.notiService.showErrorMessage('Please Enter Category Name');
+      this.loading = false;
+      return;
+    }
+    const isExisting = this.categories.some(el => el.Category == this.newCategory);
+    if(isExisting) {
+      this.notiService.showErrorMessage('Category Already Exists! Please add a new Category');
+      this.loading = false;
+      return;
+    }
+    this.budgetService.insertCategories(this.newCategory).subscribe(x => {
+      this.newCategory = '';
+      this.loading = false;
+      this.fetchCategories();
+    });
+  }
+
+  addBudget() {
+
+  }
+
+  addExpense() {
+
   }
 
   private createSvg(): void {
