@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthService } from '../auth.service';
+import { AuthGuard } from '../shared/Interceptors/auth.guard';
 import { User } from '../shared/models/user';
+import { NotificationService } from '../shared/notification.service';
 
 @Component({
   selector: 'pb-menu',
@@ -15,13 +17,20 @@ export class MenuComponent {
 
   constructor(
     private router: Router,
-    private authenticationService: AuthService
+    private authenticationService: AuthService,
+    private notiService: NotificationService,
+    private route: ActivatedRoute,
+    private canActivateGuard: AuthGuard
   ) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
     }
 
   logout() {
     this.authenticationService.logout();
+    this.notiService.showMessage('Logout Successfully');
+    this.canActivateGuard.canActivate(
+      this.route.snapshot,
+      this.router.routerState.snapshot);
   }
 
 }
