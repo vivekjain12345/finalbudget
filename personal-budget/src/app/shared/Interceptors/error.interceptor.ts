@@ -12,13 +12,13 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request).pipe(catchError(err => {
+            const error = err.error.message || err.statusText;
+            this.notiService.showErrorMessage('Some Error Occured. Please try again later.')
             if (err.status === 401) {
                 // auto logout if 401 response returned from api
                 this.authService.logout();
+                this.notiService.showMessage("Session expired. Please login again.");
             }
-            
-            const error = err.error.message || err.statusText;
-            this.notiService.showErrorMessage('Some Error Occured. Please try again later.')
             return throwError(error);
         }))
     }

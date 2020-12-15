@@ -8,7 +8,7 @@
 
         <ul class="ml-auto">
             <li *ngIf="!currentUser"><a [routerLink]="['/login']">Login</a></li>
-            <li  *ngIf="currentUser" ><span>Welcome, {{currentUser.username}}</span></li>
+            <li  *ngIf="currentUser" ><span>Welcome, {{currentUser.UserName}}</span></li>
             <li  *ngIf="currentUser" ><a class="nav-item nav-link" (click)="logout()">Logout</a></li>
         </ul>
     </nav>

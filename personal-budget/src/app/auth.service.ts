@@ -14,6 +14,8 @@ import { serverURL } from './shared/models/constants';
 export class AuthService {
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
+  timer;
+  timerInterval;
 
   constructor(private http: HttpClient, private notiService: NotificationService) {
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
@@ -21,6 +23,7 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
+    this.clearTimer();
     return this.http.post<any>(`${serverURL}login`, { username, password })
       .pipe(map(res => {
         // login successful if there's a jwt token in the response
@@ -28,9 +31,9 @@ export class AuthService {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(res.response));
           this.currentUserSubject.next(res.response);
-          setTimeout(_ => {
+          this.timer = setTimeout(_ => {
             this.notiService.showMessage("Session will expire in next 100 seconds");
-            setTimeout(_ => {
+            this.timerInterval = setTimeout(_ => {
               this.notiService.showMessage("Session expired. Please login again.");
               this.logout();
             }, 100000)
@@ -49,5 +52,16 @@ export class AuthService {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+    this.notiService.showMessage('Logout Successfully');
+    this.clearTimer();
+  }
+
+  clearTimer() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
   }
 }
