@@ -1,17 +1,14 @@
-import { Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { switchMap, tap, map, retryWhen, delay, catchError } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
+import { serverURL } from '../shared/models/constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  serverURL = 'http://localhost:3000/';
   constructor(private http: HttpClient) { }
 
   register(user) {
-    return this.http.post(`${this.serverURL}register`, user);
+    return this.http.post(`${serverURL}register`, user);
   }
 }

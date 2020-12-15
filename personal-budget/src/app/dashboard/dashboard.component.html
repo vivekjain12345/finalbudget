@@ -1,7 +1,7 @@
 <div class="page-area">
-  <section class="addCategories col-12 d-flex row">
-    <div class="col-md-6 col-12 mt-4">
-      <mat-expansion-panel>
+  <section class="addData col-12 d-flex row">
+    <div class="col-md-6 col-12 mt-4 mb-2">
+      <mat-expansion-panel [expanded]="!(categories && categories.length > 0)">
         <mat-expansion-panel-header>
           <mat-panel-title>
             New Category
@@ -10,103 +10,159 @@
         <div class="d-flex flex-column">
           <mat-form-field>
             <mat-label>Budget Category</mat-label>
-            <input matInput type="text" required [(ngModel)]="newCategory">
+            <input matInput type="text" required [formControl]="newCategoryControl">
+            <mat-error *ngIf="newCategoryControl.hasError('required')">
+              Category is <strong>required</strong>
+            </mat-error>
           </mat-form-field>
-          <button mat-raised-button color="primary" (disabled)="loading" (click)="insertCategories()">Add a new
+          <button mat-raised-button color="primary" class="mt-1" (disabled)="loading" (click)="insertCategories()">Add a
+            new
             Category</button>
         </div>
       </mat-expansion-panel>
     </div>
-    <div class="col-md-6 col-12 mt-4">
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            New Budget Details
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="d-flex flex-column">
-          <mat-form-field>
-            <mat-label>Select Category</mat-label>
-            <mat-select matNativeControl required [(ngModel)]="selectedBudgetCategory">
-              <mat-option *ngFor="let category of categories" [value]="category.Id">
-                {{category.Category}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
+
+    <div class="col-md-6 col-12"></div>
+    <ng-container *ngIf="categories && categories.length > 0">
+      <div class="col-md-6 col-12 mt-4">
+        <mat-expansion-panel [expanded]="(categories && categories.length > 0)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              New Budget Details
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="d-flex flex-column">
+            <mat-form-field>
+              <mat-label>Select Category</mat-label>
+              <mat-select matNativeControl required [formControl]="budgetCategoryControl">
+                <mat-option *ngFor="let category of categories" [value]="category.Id">
+                  {{category.Category}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="budgetCategoryControl.hasError('required')">
+                Category is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Select Month</mat-label>
+              <mat-select matNativeControl required [formControl]="budgetMonthControl">
+                <mat-option *ngFor="let month of months" [value]="month">
+                  {{month}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="budgetMonthControl.hasError('required')">
+                Month is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Currency Value</mat-label>
+              <span matPrefix>$ &nbsp;</span>
+              <input type="number" required min="0" matInput [formControl]="budgetValueControl">
+              <mat-icon matSuffix>mode_edit</mat-icon>
+              <mat-error *ngIf="budgetValueControl.hasError('required')">
+                Value is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="budgetValueControl.hasError('min')">
+                Value should be postive number
+              </mat-error>
+            </mat-form-field>
+            <button class="mt-1" (disabled)="loading" mat-raised-button color="primary" (click)="addBudget()">Add new
+              Details</button>
+          </div>
+        </mat-expansion-panel>
+      </div>
+
+      <div class="col-md-6 col-12 mt-4">
+        <mat-expansion-panel [expanded]="(categories && categories.length > 0)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              New Expense Details
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="d-flex flex-column">
+            <mat-form-field>
+              <mat-label>Select Category</mat-label>
+              <mat-select matNativeControl required [formControl]="expenseCategoryControl">
+                <mat-option *ngFor="let category of categories" [value]="category.Id">
+                  {{category.Category}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="expenseCategoryControl.hasError('required')">
+                Category is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Select Month</mat-label>
+              <mat-select matNativeControl required [formControl]="expenseMonthControl">
+                <mat-option *ngFor="let month of months" [value]="month">
+                  {{month}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="expenseMonthControl.hasError('required')">
+                Month is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Currency Value</mat-label>
+              <span matPrefix>$ &nbsp;</span>
+              <input type="number" matInput [formControl]="expenseValueControl">
+              <mat-icon matSuffix>mode_edit</mat-icon>
+              <mat-error *ngIf="expenseValueControl.hasError('required')">
+                Value is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="expenseValueControl.hasError('min')">
+                Value should be postive number
+              </mat-error>
+            </mat-form-field>
+            <button class="mt-1" (disabled)="loading" mat-raised-button color="primary" (click)="addExpense()">Add new
+              Details</button>
+          </div>
+        </mat-expansion-panel>
+      </div>
+    </ng-container>
+  </section>
+
+  <section *ngIf="categories && categories.length > 0" class="charts col-12 d-flex row mt-4 mb-4">
+    <mat-expansion-panel class="col-12" *ngIf="expenseChartData && expenseChartData.length > 0 || budgetChartData && budgetChartData.length > 0">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Charts
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="d-flex col-12 flex-wrap">
+        <div class="col-12">
+          <mat-form-field class="col-md-5 col-12 pl-0">
             <mat-label>Select Month</mat-label>
-            <mat-select matNativeControl required [(ngModel)]="selectedBudgetMonth">
+            <mat-select matNativeControl required [formControl]="chartMonth">
               <mat-option *ngFor="let month of months" [value]="month">
                 {{month}}
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
-            <mat-label>Currency Value</mat-label>
-            <span matPrefix>$ &nbsp;</span>
-            <input type="number" matInput [(ngModel)]="selectedBudgetValue">
-            <mat-icon matSuffix>mode_edit</mat-icon>
-          </mat-form-field>
-          <button (disabled)="loading" mat-raised-button color="primary" (click)="addBudget()">Add new Details</button>
         </div>
-      </mat-expansion-panel>
-    </div>
+        <div *ngIf="budgetChartData && budgetChartData.length > 0" class="col-md-6 col-12">
+          <h5 class="mb-0"> Budget Segregation</h5>
+          <ngx-charts-pie-chart [view]="view" [scheme]="colorScheme" [results]="budgetChartData" [gradient]="true"
+            [legend]="false" [labels]="true" [doughnut]="false"></ngx-charts-pie-chart>
+        </div>
+        <div *ngIf="expenseChartData && expenseChartData.length > 0" class="col-md-6 col-12">
+          <h5 class="mb-0">Expense Segregation</h5>
+          <ngx-charts-pie-chart [view]="view" [scheme]="colorScheme" [results]="expenseChartData" [gradient]="true"
+            [legend]="false" [labels]="true" [doughnut]="false">
+          </ngx-charts-pie-chart>
+        </div>
+        <div *ngIf="expenseChartData && expenseChartData.length > 0 && budgetChartData && budgetChartData.length > 0" class="col-12">
+          <h5 class="mb-0">Budget - Expense Comparison</h5>
+          <br>
+          <ngx-charts-bar-vertical-2d class="verticalBarChart"[view]="[700, 400]" [scheme]="colorScheme" [results]="budgetExpenseChartData"
+            [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true"
+            legendPosition="right" [showYAxisLabel]="true" xAxisLabel="Category" yAxisLabel="Amount">
+          </ngx-charts-bar-vertical-2d>
+        </div>
+      </div>
+    </mat-expansion-panel>
   </section>
 
-  <section class="budget col-12 d-flex row">
-
-    <div class="col-md-6 col-12 mt-4">
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            New Expense Details
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="d-flex flex-column">
-          <mat-form-field>
-            <mat-label>Select Category</mat-label>
-            <mat-select matNativeControl required [(ngModel)]="selectedExpenseCategory">
-              <mat-option *ngFor="let category of categories" [value]="category.Id">
-                {{category.Category}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Select Month</mat-label>
-            <mat-select matNativeControl required [(ngModel)]="selectedExpenseMonth">
-              <mat-option *ngFor="let month of months" [value]="month">
-                {{month}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Currency Value</mat-label>
-            <span matPrefix>$ &nbsp;</span>
-            <input type="number" matInput [(ngModel)]="selectedExpenseValue">
-            <mat-icon matSuffix>mode_edit</mat-icon>
-          </mat-form-field>
-          <button (disabled)="loading" mat-raised-button color="primary" (click)="addExpense()">Add new Details</button>
-        </div>
-      </mat-expansion-panel>
-    </div>
-  </section>
-
-
-
-  <article>
-    <h1>Pie Chart</h1>
-    <p>
-      <canvas id="myChart" width="400" height="400"></canvas>
-    </p>
-
-  </article>
-
-  <div>
-    <div>
-      <h1>Bar Chart</h1>
-      <figure id="bar"></figure>
-    </div>
-  </div>
 
 
 

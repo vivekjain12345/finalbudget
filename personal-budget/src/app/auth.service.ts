@@ -5,6 +5,7 @@ import { switchMap, tap, map, retryWhen, delay, catchError } from 'rxjs/operator
 import { HttpClient } from '@angular/common/http';
 import { User } from './shared/models/user';
 import { NotificationService } from './shared/notification.service';
+import { serverURL } from './shared/models/constants';
 
 
 @Injectable({
@@ -14,15 +15,13 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
-  serverURL = 'http://localhost:3000/';
-
   constructor(private http: HttpClient, private notiService: NotificationService) {
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
   login(username: string, password: string) {
-    return this.http.post<any>(`${this.serverURL}login`, { username, password })
+    return this.http.post<any>(`${serverURL}login`, { username, password })
       .pipe(map(res => {
         // login successful if there's a jwt token in the response
         if (res.response && res.response.token) {
@@ -31,11 +30,11 @@ export class AuthService {
           this.currentUserSubject.next(res.response);
           setTimeout(_ => {
             this.notiService.showMessage("Session will expire in next 100 seconds");
-            setTimeout(_ =>{
+            setTimeout(_ => {
               this.notiService.showMessage("Session expired. Please login again.");
               this.logout();
-            },100000)
-          },20000);
+            }, 100000)
+          }, 50000);
         }
 
         return res;

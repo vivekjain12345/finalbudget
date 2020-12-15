@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { switchMap, tap, map, retryWhen, delay, catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 //import { HttpService } from '../../../services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
+import { serverURL } from './models/constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetService {
-
-  serverURL = 'http://localhost:3000/';
 
   constructor(private http: HttpClient, private authenticationService: AuthService) {
 
@@ -18,15 +16,38 @@ export class BudgetService {
 
   public getCategories(): Observable<any> {
     const currentUser = this.authenticationService.currentUserValue;
-    console.log(currentUser);
     const userId = currentUser['Id'];
-    return this.http.get<any>(`${this.serverURL}fetchCategories?userId=${userId}`);
+    return this.http.get<any>(`${serverURL}fetchCategories?userId=${userId}`);
+  }
+
+  public getBudget(): Observable<any> {
+    const currentUser = this.authenticationService.currentUserValue;
+    const userId = currentUser['Id'];
+    return this.http.get<any>(`${serverURL}fetchBudget?userId=${userId}`);
+  }
+
+  public getExpense(): Observable<any> {
+    const currentUser = this.authenticationService.currentUserValue;
+    const userId = currentUser['Id'];
+    return this.http.get<any>(`${serverURL}fetchExpense?userId=${userId}`);
   }
 
   public insertCategories(category: string): Observable<any> {
     const currentUser = this.authenticationService.currentUserValue;
     const userId = currentUser['Id'];
-    return this.http.post<any>(`${this.serverURL}addCategory`, { userId: userId, category: category })
+    return this.http.post<any>(`${serverURL}addCategory`, { userId: userId, category: category })
+  }
+
+  public insertBudget(categoryId: number, budgetValue: number, month: string): Observable<any> {
+    const currentUser = this.authenticationService.currentUserValue;
+    const userId = currentUser['Id'];
+    return this.http.post<any>(`${serverURL}addBudget`, { categoryId, budgetValue, month, userId })
+  }
+
+  public insertExpense(categoryId: number, expenseValue: number, month: string): Observable<any> {
+    const currentUser = this.authenticationService.currentUserValue;
+    const userId = currentUser['Id'];
+    return this.http.post<any>(`${serverURL}addExpense`, { categoryId, expenseValue, month, userId })
   }
 }
 

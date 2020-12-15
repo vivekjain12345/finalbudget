@@ -9,12 +9,12 @@ const config = {
 function jwtMiddleware() {
     const { secret } = config;
     return expressJwt({ secret, algorithms: ['HS256'] }).unless({
-      path: ['/register', '/login']
+      path: ['/register', '/login', '/budget']
   });
 }
 
 function omitPassword(user) {
-  const { password, ...userWithoutPassword } = user;
+  const { Password, ...userWithoutPassword } = user;
   return userWithoutPassword;
 }
 
@@ -23,7 +23,7 @@ function authenticate(email, password) {
     if(user.length === 0) {
       return Promise.reject(`Combination of Username & password do not match`);
     }
-    const token = jwt.sign({ sub: user[0].email }, config.secret, { expiresIn: '120000' });
+    const token = jwt.sign({ sub: user[0].email }, config.secret, { expiresIn: '150000' });
     return Promise.resolve({...omitPassword(user[0]), token})
   });
 }

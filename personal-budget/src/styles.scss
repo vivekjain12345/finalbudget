@@ -529,3 +529,10 @@ polyline{
   background-color:red;
   color: white;
 }
+
+.verticalBarChart .ngx-charts-outer {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  width: 100% !important;
+}

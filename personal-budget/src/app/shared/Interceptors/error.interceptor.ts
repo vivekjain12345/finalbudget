@@ -4,10 +4,11 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { AuthService } from '../../auth.service';
+import { NotificationService } from '../notification.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService, private notiService: NotificationService) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request).pipe(catchError(err => {
@@ -17,6 +18,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             }
             
             const error = err.error.message || err.statusText;
+            this.notiService.showErrorMessage('Some Error Occured. Please try again later.')
             return throwError(error);
         }))
     }

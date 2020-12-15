@@ -51,9 +51,31 @@ router.post("/addCategory", cors(), (req, res) => {
   });
 });
 
+router.post("/addBudget", cors(), (req, res) => {
+  const body = req.body;
+  const userId = body.userId;
+  const categoryId = body.categoryId;
+  const budget = body.budgetValue;
+  const month = body.month;
+  db.addBudget(categoryId,userId,budget,month).then((x) => {
+    res.json(x);
+  });
+});
+
 router.get("/fetchBudget", cors(), (req, res) => {
   const userId = req.query.userId;
   db.fetchBudget(userId).then((x) => {
+    res.json(x);
+  });
+});
+
+router.post("/addExpense", cors(), (req, res) => {
+  const body = req.body;
+  const userId = body.userId;
+  const categoryId = body.categoryId;
+  const expenseValue = body.expenseValue;
+  const month = body.month;
+  db.addExpense(categoryId,userId,expenseValue,month).then((x) => {
     res.json(x);
   });
 });

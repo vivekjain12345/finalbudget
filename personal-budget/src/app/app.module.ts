@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MaterialModule } from './shared/material.module';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { HttpClientModule , HTTP_INTERCEPTORS} from '@angular/common/http';
 
@@ -55,7 +56,8 @@ import {HashLocationStrategy, LocationStrategy} from '@angular/common';
     AppRoutingModule,
     ReactiveFormsModule,
     MaterialModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    NgxChartsModule
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy},
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }, 
