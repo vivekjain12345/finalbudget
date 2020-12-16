@@ -36,7 +36,7 @@ export class AuthService {
             this.timerInterval = setTimeout(_ => {
               this.notiService.showMessage("Session expired. Please login again.");
               this.logout();
-            }, 100000)
+            }, 100000);
           }, 50000);
         }
 
